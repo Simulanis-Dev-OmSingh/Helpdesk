@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User{
+   id Int @id @default(autoincrement())
+   uuid String @unique @default(uuid())
+   name String
+   email String @unique
+   contact String
+   tickets Query[]
+}
+
+model Query{
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userid] , references: [uuid])
+  userid String
+  queryid String @unique @default(uuid())
+  title String
+  description String
+  origin String
+  priority Priority
+  status Status @default(NEW)
+  type Type?
+  createdAt DateTime @default(now())
+  admins Admins? @relation(fields: [assignedTo] , references: [adminid])
+  assignedTo String? @default("cfdad878-1c3c-4825-a68a-dc889c97a832")
+  solvedBy String? @default("None")
+}
+
+model Admins{
+  id Int @id @default(autoincrement())
+  adminid String @unique @default(uuid())
+  name String
+  email String @unique
+  department String
+  password String
+  superadmin Boolean @default(false)
+  queries Query[]
+}
+
+
+
+
+enum Priority{
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum Status{
+  NEW
+  INPROGRESS
+  SOLVED
+}
+
+enum Type{
+  BUG
+  SALES
+
+}
