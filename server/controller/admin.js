@@ -1,16 +1,16 @@
-import { createNewAdmin,resetPassword ,login} from "../utils/admin.js"
+import AdminUtils from "../utils/admin.js"
 import bcrypt from "bcrypt"
 
 
 export const createAdmin = async (req,res) =>{
-    console.log("REACHED CREATE ADMIN in CONTROLLER")
+    // console.log("REACHED CREATE ADMIN in CONTROLLER")
     try{
         const password = process.env.DEFAULT_PASSWORD
-        console.log("MY DEFAULT PASSWORD IS",password)
+        // console.log("MY DEFAULT PASSWORD IS",password)
 
         let encryptedPassword =  bcrypt.hashSync(password,10)
 
-        const {name ,email , department , superadmin} = req.body
+        const {name ,email , department , superadmin} = req.body.data
         const data = {
             name ,
             email ,
@@ -19,10 +19,14 @@ export const createAdmin = async (req,res) =>{
             password : encryptedPassword,
             superadmin
         }
-         let response = await createNewAdmin({data})
+         let response = await AdminUtils.createAdmin({data})
          res.status(200).json({
             status : true,
-            message : response
+            message : {
+                msg : "NEW ADMIN CREATED DEFAULT PASSWORD IS \"PASSWORD\" ",
+                response
+            }
+                
          })
 
 
@@ -37,14 +41,15 @@ export const createAdmin = async (req,res) =>{
 
 }
 
-export const loginUser = async (req,res) =>{
+export const login = async (req,res) =>{
     const {email , password} = req.body
     console.log("LOGIN USER ", email , password)
     try{
-        let response =  await login({email , password})
+        let response =  await AdminUtils.login({email , password})
         return res.status(200).json({
-            status: true,
-            message: response
+            status:true,
+            message: response.msg
+
         })
     }catch(error){
         console.log(error)
@@ -62,7 +67,7 @@ export const forgetPassword = async (req,res) =>{
         console.log("LOGIN USER ", email , password)
         let encryptedPassword = bcrypt.hashSync(password,10)
 
-        let response = await resetPassword({email , encryptedPassword})
+        let response = await AdminUtils.forgetPassword({email , encryptedPassword})
 
         res.status(200).json({
             status : true ,
@@ -79,4 +84,48 @@ export const forgetPassword = async (req,res) =>{
         })
     }
 
+}
+
+
+export const  getAdmin = async (req ,res) =>{
+    try{
+        let adminid = req.query.adminid
+        let response =  await AdminUtils.getAdmin({adminid})
+        return res.status(200).json({
+            status:true,
+            message: {
+                msg : "GOT ADMIN DETAILS",
+                response 
+            }
+
+        })
+    }catch(error){
+        console.log("ERROR OCCURED WHILE FETCHING ADMIN DETAILS")
+        console.log(error)
+        return res.status(402).json({
+            status: false,
+            message: error.message
+        })
+    }
+}
+
+export const getAllAdmin = async (req,res) =>{
+    try{
+        let response =  await AdminUtils.getAllAdmin()
+        return res.status(200).json({
+            status:true,
+            message: {
+                msg : "GOT ALL ADMIN DETAILS",
+                response 
+            }
+
+        })
+    }catch(error){
+        console.log("ERROR OCCURED WHILE FETCHING ADMIN DETAILS")
+        console.log(error)
+        return res.status(402).json({
+            status: false,
+            message: error.message
+        })
+    }
 }

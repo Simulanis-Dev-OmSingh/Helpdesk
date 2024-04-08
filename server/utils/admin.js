@@ -1,12 +1,12 @@
 import prisma from "./database.js"
 import bcrypt from "bcrypt"
-export const createNewAdmin = async ({data}) =>{
+const createAdmin = async ({data}) =>{
     return prisma.admins.create({
         data:data
     })
 }
 
-export const resetPassword = ({email , encryptedPassword}) =>{
+const forgetPassword = ({email , encryptedPassword}) =>{
     return prisma.admins.update({
         where:{email},
         data:{
@@ -15,7 +15,7 @@ export const resetPassword = ({email , encryptedPassword}) =>{
     })
 }
 
-export const login = async ({email , password}) =>{
+ const login = async ({email , password}) =>{
     const findEmail =await  prisma.admins.findFirst({
         where:{
             email
@@ -27,15 +27,47 @@ export const login = async ({email , password}) =>{
         let comparedPass = bcrypt.compareSync(password,findEmail.password)
         console.log("comparedPass",comparedPass)
         if(comparedPass){
-            return findEmail
+            return {
+                status : 200,
+                msg : findEmail
+            }
+                
 
         }else{
             console.log("INCORRECT PASSWORD")
-            return "INCORRECT PASSWORD"
+            return {
+                status : 402,
+                msg : "INCORRECT PASSWORD"
+            }
         }
 
     }else{
         console.log("incorrect Email")
-        return "INCORRECT EMAIL"
+        return {
+            status : 402,
+            msg : "INCORRECT EMAIL"
+        }
     }
+}
+
+
+ const getAdmin = ({adminid}) =>{
+    return prisma.admins.findFirst({
+        where:{
+            adminid
+        }
+    })
+}
+
+
+ const getAllAdmin = () =>{
+    return prisma.admins.findMany()
+}
+
+export default {
+    createAdmin,
+    forgetPassword ,
+    login ,
+    getAdmin ,
+    getAllAdmin
 }

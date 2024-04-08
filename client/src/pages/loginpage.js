@@ -10,6 +10,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showAlert, setShowAlert] = useState(false);
+  const [err , setErr] = useState("")
   const navigate = useNavigate()
 
   const onSubmit = async(e) => {
@@ -23,9 +24,12 @@ const LoginPage = () => {
       }
       let res = await axios.post(`${apiURL}/api/admin/login`, bodyData)
       console.log(res)
-      console.log(res.status)
-      if(res.status == 200){
+      console.log(res.data.message)
+      if(res.data.message.email != undefined){
         navigate("/home")
+      }else{
+        setShowAlert(true)
+        setErr(res.data.message)
       }
 
 
@@ -42,8 +46,9 @@ const LoginPage = () => {
     <>
     <div >
       <div className='justify-content-center d-flex flex-row '>
-
+      
       <h1>Login</h1>
+      <h2>{showAlert ? err  : <></>}</h2>
       <form onSubmit={onSubmit} >
 
         <div className="form-group">
@@ -73,7 +78,7 @@ const LoginPage = () => {
         <div className="form-group">
           <input
             type="submit"
-            value="Create User"
+            value="Login"
             className="btn btn-primary"
             />
         </div>

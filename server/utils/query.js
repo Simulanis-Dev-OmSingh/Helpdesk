@@ -1,18 +1,65 @@
 import prisma from "./database.js";
 
-export const createUser = ({data}) =>{
+ const createUser = ({data}) =>{
     return prisma.user.create({
         data:data
     })
 }
 
-export const createQuery = ({data}) =>{
+ const createQuery = ({data}) =>{
     return prisma.query.create({
         data:data
     })
 }
 
-export const allQueries = () =>{
+ const getAllQueries = () =>{
     return prisma.query.findMany()
 }
 
+ const getAllUsers = () =>{
+    return prisma.user.findMany()
+}
+
+ const getQuery = async ({queryid}) =>{
+    
+
+    return prisma.query.findFirst({
+        where :{
+            queryid : queryid
+        }
+    });
+
+    
+}
+
+ const getUserDetails = ({userid}) =>{
+    return prisma.user.findFirst({
+        where:{
+            uuid : userid
+        }
+    })
+}
+
+const updateQuery = ({queryid , priority , status , type}) =>{
+    return prisma.query.update({
+        where:{
+            queryid
+        },  
+        data:{
+            priority , 
+            status,
+            type
+        }
+    })
+
+}
+
+export default {
+    createUser ,
+    createQuery , 
+    getAllQueries ,
+    getAllUsers ,
+    getQuery ,
+     getUserDetails,
+     updateQuery
+}

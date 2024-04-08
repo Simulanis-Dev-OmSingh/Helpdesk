@@ -32,10 +32,10 @@ model Query{
   origin String
   priority Priority
   status Status @default(NEW)
-  type Type?
+  type Type @default(NONE)
   createdAt DateTime @default(now())
   admins Admins? @relation(fields: [assignedTo] , references: [adminid])
-  assignedTo String? @default("cfdad878-1c3c-4825-a68a-dc889c97a832")
+  assignedTo String? @default("4dfbbc44-8f79-4d26-b80f-af5289f3bdbc")
   solvedBy String? @default("None")
 }
 
@@ -66,6 +66,7 @@ enum Status{
 }
 
 enum Type{
+  NONE
   BUG
   SALES
 

@@ -9,6 +9,9 @@ import ResetPassword from "./pages/resetpassword";
 import Sidebar from "./components/sidebar";
 import Navbar from "./components/navbar";
 import Dashboard from "./pages/dashboard";
+import EditTicket from "./pages/editTicket";
+import CreateTicket from "./pages/createTicket";
+import CreateAdmin from "./pages/createAdmin";
 
 function App() {
   return (
@@ -23,6 +26,9 @@ function App() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/resetpassword" element={<ResetPassword />} />
                 <Route path="/home" element={<Dashboard/>}/>
+                <Route path="/update-ticket" element={<EditTicket />}/>
+                <Route path="/create-ticket" element={< CreateTicket/>}/>
+                <Route path="/create-admin" element={< CreateAdmin/>}/>
               </Routes>
             </div>
           </div>
