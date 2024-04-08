@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `query` MODIFY `assignedTo` VARCHAR(191) NULL DEFAULT 'cb259d6a-8d28-45c0-9114-e9f4266d455c';

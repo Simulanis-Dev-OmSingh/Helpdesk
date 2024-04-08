@@ -31,7 +31,7 @@ const forgetPassword = ({email , encryptedPassword}) =>{
                 status : 200,
                 msg : findEmail
             }
-                
+
 
         }else{
             console.log("INCORRECT PASSWORD")
@@ -51,10 +51,10 @@ const forgetPassword = ({email , encryptedPassword}) =>{
 }
 
 
- const getAdmin = ({adminid}) =>{
+ const getAdmin = ({uuid}) =>{
     return prisma.admins.findFirst({
         where:{
-            adminid
+            uuid
         }
     })
 }

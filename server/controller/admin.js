@@ -9,7 +9,7 @@ export const createAdmin = async (req,res) =>{
         // console.log("MY DEFAULT PASSWORD IS",password)
 
         let encryptedPassword =  bcrypt.hashSync(password,10)
-
+        console.log(req.body?.data,"----------------------------------------------------------------------")
         const {name ,email , department , superadmin} = req.body.data
         const data = {
             name ,
@@ -26,7 +26,7 @@ export const createAdmin = async (req,res) =>{
                 msg : "NEW ADMIN CREATED DEFAULT PASSWORD IS \"PASSWORD\" ",
                 response
             }
-                
+
          })
 
 
@@ -89,13 +89,13 @@ export const forgetPassword = async (req,res) =>{
 
 export const  getAdmin = async (req ,res) =>{
     try{
-        let adminid = req.query.adminid
-        let response =  await AdminUtils.getAdmin({adminid})
+        let uuid = req.query.uuid
+        let response =  await AdminUtils.getAdmin({uuid})
         return res.status(200).json({
             status:true,
             message: {
                 msg : "GOT ADMIN DETAILS",
-                response 
+                response
             }
 
         })
@@ -116,7 +116,7 @@ export const getAllAdmin = async (req,res) =>{
             status:true,
             message: {
                 msg : "GOT ALL ADMIN DETAILS",
-                response 
+                response
             }
 
         })

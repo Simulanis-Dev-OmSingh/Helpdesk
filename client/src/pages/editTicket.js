@@ -21,20 +21,20 @@ const EditTicket = () => {
 
 
     const location = useLocation()
-    const queryId = location.state.queryid
-    
-    
-    
+    const uuid = location.state.uuid
+
+
+
     const fetchQueryData = async () => {
-        let res = await axios.get(`${apiURL}/api/ticket/get-query`, { params: { queryId } })
+        let res = await axios.get(`${apiURL}/api/ticket/get-query`, { params: { uuid } })
         setQueryData(res.data.message.response)
-        
+
         setDate(res.data.message.response.createdAt.slice(0, 10).split("-").reverse().join("/"))
         let userid = res.data.message.response.userid
         let adminid = res.data.message.response.assignedTo
         setStatus(res.data.message.response.status)
         // console.log(res.data)
-        
+
         res = await axios.get(`${apiURL}/api/ticket/get-user`, { params: { userid } })
         setUserData(res.data.message.response)
 
@@ -49,8 +49,8 @@ const EditTicket = () => {
         setAllAdminData(res.data.message.response)
         // console.log(res.data.message.response)
     }
-    
-          
+
+
 
     useEffect(() => {
         fetchQueryData()
@@ -61,7 +61,7 @@ const EditTicket = () => {
     const onSubmit = async (e) => {
         e.preventDefault()
         let data = {
-            "queryid" : queryData.queryid,
+            "uuid" : queryData.uuid,
             priority,
             status,
             type
@@ -84,7 +84,7 @@ const EditTicket = () => {
                         <input
                             type="text"
                             className="form-control"
-                            value={queryData.queryid}
+                            value={queryData.uuid}
                             // onChange={(e) => setUserEmail(e.target.value)}
                             disabled
                         />

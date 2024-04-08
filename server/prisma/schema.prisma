@@ -26,7 +26,7 @@ model Query{
   id Int @id @default(autoincrement())
   user User @relation(fields: [userid] , references: [uuid])
   userid String
-  queryid String @unique @default(uuid())
+  uuid String @unique @default(uuid())
   title String
   description String
   origin String
@@ -34,14 +34,14 @@ model Query{
   status Status @default(NEW)
   type Type @default(NONE)
   createdAt DateTime @default(now())
-  admins Admins? @relation(fields: [assignedTo] , references: [adminid])
-  assignedTo String? @default("4dfbbc44-8f79-4d26-b80f-af5289f3bdbc")
+  assignedTo String? @default("cb259d6a-8d28-45c0-9114-e9f4266d455c")
+  admins Admins? @relation(fields: [assignedTo] , references: [uuid])
   solvedBy String? @default("None")
 }
 
 model Admins{
   id Int @id @default(autoincrement())
-  adminid String @unique @default(uuid())
+  uuid String @unique @default(uuid())
   name String
   email String @unique
   department String

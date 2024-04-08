@@ -82,16 +82,16 @@ export const getAllUsers = async (req , res) =>{
                 msg : "error occured while fetching all User",
                 error : err
             }
-                
+
 
         })
     }
 }
 
 export const getQuery = async (req,res) =>{
-    
+
     try {
-        let response = await QueryUtils.getQuery({ "queryid" : req.query.queryid})
+        let response = await QueryUtils.getQuery({ "uuid" : req.query.uuid})
         console.log("response",response)
 
 
@@ -123,7 +123,7 @@ export const getUserDetails = async(req , res) =>{
         res.status(200).json({
             status:true,
             message: {
-                msg : "GOT USER DETAILS",    
+                msg : "GOT USER DETAILS",
                 response
             }
         })
@@ -136,7 +136,7 @@ export const getUserDetails = async(req , res) =>{
                 msg : "error occured while fetching all User",
                 error : err
             }
-                
+
 
         })
     }
@@ -145,13 +145,13 @@ export const getUserDetails = async(req , res) =>{
 export const updateQuery = async (req,res) =>{
     try{
         console.log("first",req.body)
-        let {queryid , priority , status ,type} = req.body.data
-        console.log(queryid , priority , status )
-        let response = await QueryUtils.updateQuery({queryid , priority , status , type})
+        let {uuid , priority , status ,type} = req.body.data
+        // console.log(queryid , priority , status )
+        let response = await QueryUtils.updateQuery({uuid , priority , status , type})
         res.status(200).json({
             status:true,
             message: {
-                msg : "UPDATED QUERY DETAILS",    
+                msg : "UPDATED QUERY DETAILS",
                 response
             }
         })
@@ -164,8 +164,8 @@ export const updateQuery = async (req,res) =>{
                 msg : "error occured while updating query",
                 error : err
             }
-                
+
 
         })
-    }   
+    }
 }

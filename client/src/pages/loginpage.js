@@ -4,6 +4,7 @@ import axios from "axios"
 import { apiURL } from '../env';
 import { useNavigate } from "react-router-dom"
 
+
 const LoginPage = () => {
 
 
@@ -26,6 +27,17 @@ const LoginPage = () => {
       console.log(res)
       console.log(res.data.message)
       if(res.data.message.email != undefined){
+        let adminData = {
+          loggedIn : true,
+          adminid: res.data.message.uuid,
+          department: res.data.message.department,
+          email : res.data.message.email,
+          name : res.data.message.name,
+          superadmin : res.data.message.superadmin,
+
+        }
+        localStorage.setItem('adminData',JSON.stringify(adminData))
+        
         navigate("/home")
       }else{
         setShowAlert(true)
@@ -44,9 +56,9 @@ const LoginPage = () => {
   return (
 
     <>
-    <div >
-      <div className='justify-content-center d-flex flex-row '>
-      
+
+      <div className='justify-content-center d-flex flex-column '>
+
       <h1>Login</h1>
       <h2>{showAlert ? err  : <></>}</h2>
       <form onSubmit={onSubmit} >
@@ -85,7 +97,7 @@ const LoginPage = () => {
       </form>
             </div>
 
-  </div>
+
     </>
   );
 

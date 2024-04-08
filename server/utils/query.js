@@ -20,16 +20,16 @@ import prisma from "./database.js";
     return prisma.user.findMany()
 }
 
- const getQuery = async ({queryid}) =>{
-    
+ const getQuery = async ({uuid}) =>{
+
 
     return prisma.query.findFirst({
         where :{
-            queryid : queryid
+            uuid : uuid
         }
     });
 
-    
+
 }
 
  const getUserDetails = ({userid}) =>{
@@ -40,13 +40,13 @@ import prisma from "./database.js";
     })
 }
 
-const updateQuery = ({queryid , priority , status , type}) =>{
+const updateQuery = ({uuid , priority , status , type}) =>{
     return prisma.query.update({
         where:{
-            queryid
-        },  
+            uuid
+        },
         data:{
-            priority , 
+            priority ,
             status,
             type
         }
@@ -56,7 +56,7 @@ const updateQuery = ({queryid , priority , status , type}) =>{
 
 export default {
     createUser ,
-    createQuery , 
+    createQuery ,
     getAllQueries ,
     getAllUsers ,
     getQuery ,

@@ -2,38 +2,34 @@ import logo from "./logo.svg";
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { store } from "./store/store";
+import { Provider } from "react-redux";
+import { useState } from "react";
 
-
-import LoginPage from "./pages/loginpage";
-import ResetPassword from "./pages/resetpassword";
+import AppRoutes from "./pages/appRoutes";
 import Sidebar from "./components/sidebar";
 import Navbar from "./components/navbar";
-import Dashboard from "./pages/dashboard";
-import EditTicket from "./pages/editTicket";
-import CreateTicket from "./pages/createTicket";
-import CreateAdmin from "./pages/createAdmin";
-
 function App() {
+
+  const [sideBar,setSideBar] = useState(false)
+
+
   return (
     <>
-      <div className="p-2">
+    <Provider store={store}>
+
+      <div className="p-0">
         <Router>
-          <Navbar />
-          <div className="d-flex">
-            <Sidebar />
+          <Navbar sideBar={sideBar} setSideBar={setSideBar} />
+          <div className="d-flex p-2">
+            <Sidebar sideBar={sideBar} />
             <div id="content">
-              <Routes>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/resetpassword" element={<ResetPassword />} />
-                <Route path="/home" element={<Dashboard/>}/>
-                <Route path="/update-ticket" element={<EditTicket />}/>
-                <Route path="/create-ticket" element={< CreateTicket/>}/>
-                <Route path="/create-admin" element={< CreateAdmin/>}/>
-              </Routes>
+              <AppRoutes/>
             </div>
           </div>
         </Router>
       </div>
+    </Provider>
     </>
   );
 }
