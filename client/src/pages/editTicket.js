@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import axios from 'axios'
-import { apiURL } from '../env'
+import { apiURL ,token} from '../env'
 
 const EditTicket = () => {
 
@@ -26,37 +26,53 @@ const EditTicket = () => {
 
 
     const fetchQueryData = async () => {
-        let res = await axios.get(`${apiURL}/api/ticket/get-query`, { params: { uuid } })
-        setQueryData(res.data.message.response)
+        let res = await axios.get(`${apiURL}/api/ticket/get-query`, {
+             params: { uuid },
+             headers:{
+                authorization : `Bearer ${token}`
+              }
+            })
+        setQueryData(res.data.data)
 
-        setDate(res.data.message.response.createdAt.slice(0, 10).split("-").reverse().join("/"))
-        let userid = res.data.message.response.userid
-        let adminid = res.data.message.response.assignedTo
-        setStatus(res.data.message.response.status)
-        // console.log(res.data)
-
-        res = await axios.get(`${apiURL}/api/ticket/get-user`, { params: { userid } })
-        setUserData(res.data.message.response)
-
-
-        res = await axios.get(`${apiURL}/api/admin/get-admin`, { params: { adminid } })
-        setAdminData(res.data.message.response)
-        // console.log(res.data.message.response)
-        setAssigned(res.data.message.response )
+        setDate(res.data.data.createdAt.slice(0, 10).split("-").reverse().join("/"))
+        let userid = res.data.data.userid
+        let adminid = res.data.data.assignedTo
+        setStatus(res.data.data.status)
 
 
-        res = await axios.get(`${apiURL}/api/admin/get-allAdmin`)
-        setAllAdminData(res.data.message.response)
-        // console.log(res.data.message.response)
+        // res = await axios.get(`${apiURL}/api/ticket/get-user`, {
+        //     params: { userid },
+        //     headers:{
+        //         authorization : `Bearer ${token}`
+        //       }
+        //      })
+        setUserData(res.data.data)
+
+
+        res = await axios.get(`${apiURL}/api/admin/get-admin`, { params: { adminid } ,
+        headers:{
+            authorization : `Bearer ${token}`
+          }
+        })
+        setAdminData(res.data.data)
+
+        setAssigned(res.data.data )
+
+
+        res = await axios.get(`${apiURL}/api/admin/get-allAdmin` ,{
+            headers:{
+            authorization : `Bearer ${token}`
+          }})
+        setAllAdminData(res.data.data)
+
     }
-
 
 
     useEffect(() => {
         fetchQueryData()
-
+        // fetchAdminsData()
     }, [])
-    // console.log("ALL ADMIN Data",allAdminData , typeof(allAdminData))
+
 
     const onSubmit = async (e) => {
         e.preventDefault()
@@ -67,11 +83,12 @@ const EditTicket = () => {
             type
 
         }
-        let res = await axios.post(`${apiURL}/api/ticket/update-ticket`,{data})
-        console.log(res)
+        let res = await axios.post(`${apiURL}/api/ticket/update-ticket`,{data ,headers:{
+            authorization : `Bearer ${token}`
+          }})
+
     }
 
-    console.log("value",assigned)
 
     return (
         <>
@@ -189,7 +206,7 @@ const EditTicket = () => {
                             className="form-control"
                             value={`${adminData.name} (${adminData.email})`}
                             onChange={(e) => {
-                                console.log("my" , e.target.value)
+
                                 setStatus(e.target.value);
                             }}
                         >
@@ -228,11 +245,11 @@ const EditTicket = () => {
                     </div>
 
                     <div className="form-group">
-                        <label>Contact </label>
+                        <label>Phone </label>
                         <input
                             type="text"
                             className="form-control"
-                            value={userData.contact}
+                            value={userData.phone}
                             disabled
                         />
                     </div>

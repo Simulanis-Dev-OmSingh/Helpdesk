@@ -17,17 +17,16 @@ const CreateAdmin = () => {
     const [res,setRes] = useState("")
   const onSubmit = async(e)=>{
     e.preventDefault()
-        
+
         let data = {
             name,
             email,
             department,
             superadmin
         }
-        console.log(data)
-         let response = await axios.post(`${apiURL}/api/admin/create`,{data})
+
+         let response = await axios.post(`${apiURL}/api/admin/create`, data )
          setShowRes(true)
-        console.log(response.data.message.msg)
         setRes(response.data.message.msg)
         setName("")
         setEmail("")
@@ -36,7 +35,7 @@ const CreateAdmin = () => {
   }
   return (
     <div>
-                
+
                 {showRes ? <h4>{res}</h4> : <h1>Create New Admin</h1>}
                 <form onSubmit={onSubmit} >
                     {/* name */}
@@ -81,17 +80,17 @@ const CreateAdmin = () => {
                             })}
                         </select>
                     </div>
-                            
+
                   {/*Superadmin  */}
 
                   <div className="form-group">
-            
+
 <input type="checkbox" onClick={() => setSuperadmin(prevadmin => !prevadmin)}></input>
                         <label>Super Admin</label>
-                        
+
                     </div>
 
-                  
+
                     <div className="form-group">
                         <input
                             type="submit"

@@ -1,14 +1,27 @@
+import { error } from "console";
 import prisma from "./database.js"
-import bcrypt from "bcrypt"
-const createAdmin = async ({data}) =>{
+import bcrypt from "bcrypt";
+
+const findAdmin = async({email})=>{
+      return await prisma.admins.findFirst({
+        where:{
+            email
+        }
+      })
+}
+
+const createAdmin = async ({ data }) =>{
     return prisma.admins.create({
-        data:data
+         data:data
     })
 }
 
 const forgetPassword = ({email , encryptedPassword}) =>{
+
     return prisma.admins.update({
-        where:{email},
+        where:{
+            email
+        },
         data:{
             password : encryptedPassword
         }
@@ -16,39 +29,26 @@ const forgetPassword = ({email , encryptedPassword}) =>{
 }
 
  const login = async ({email , password}) =>{
-    const findEmail =await  prisma.admins.findFirst({
-        where:{
+
+    const findEmail = await prisma.admins.findFirst({
+        where: {
             email
         }
-    })
-    if(findEmail){
-        console.log(bcrypt.hashSync(password,10))
-        console.log(findEmail.password)
-        let comparedPass = bcrypt.compareSync(password,findEmail.password)
-        console.log("comparedPass",comparedPass)
-        if(comparedPass){
-            return {
-                status : 200,
-                msg : findEmail
-            }
+    });
 
-
-        }else{
-            console.log("INCORRECT PASSWORD")
-            return {
-                status : 402,
-                msg : "INCORRECT PASSWORD"
-            }
-        }
-
-    }else{
-        console.log("incorrect Email")
-        return {
-            status : 402,
-            msg : "INCORRECT EMAIL"
-        }
+    if(!findEmail){
+        throw new Error("Email Not found")
     }
-}
+
+    let comparedPass = bcrypt.compareSync(password,findEmail.password)
+
+    if(!comparedPass){
+            throw new Error("Password is wrong.")
+        }
+
+    return findEmail;
+
+    }
 
 
  const getAdmin = ({uuid}) =>{
@@ -69,5 +69,6 @@ export default {
     forgetPassword ,
     login ,
     getAdmin ,
-    getAllAdmin
+    getAllAdmin,
+    findAdmin
 }

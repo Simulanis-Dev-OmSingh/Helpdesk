@@ -1,13 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { UseSelector, useSelector } from 'react-redux'
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 const Navbar = ({sideBar,setSideBar}) => {
-  const adminData = JSON.parse(localStorage.getItem('adminData'))
-
+  const adminData = localStorage.getItem('token')
+  useEffect(()=>{},[adminData])
   return (
 
-      adminData !== null ? (<>
+      adminData ? (<>
 
         <div className='m-0 p-0 bg-secondary text-white d-flex'>
           <div className='d-flex' onClick={() => setSideBar(!sideBar)}>

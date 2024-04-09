@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from "react-router-dom";
 import axios from 'axios';
-import { apiURL } from '../env';
+import { apiURL , token } from '../env';
 
 const CreateTicket = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [contact, setContact] = useState("");
+    const [phone, setphone] = useState("");
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [origin, setOrigin] = useState("");
@@ -21,35 +21,43 @@ const CreateTicket = () => {
     }, [])
     const onSubmit = async (e) => {
         e.preventDefault()
-        console.log(name, email, contact, title, description, origin, priority)
+        let applicationId = "21514414865315"
+
         let data = {
             name,
             email,
-            contact,
+            phone,
             title,
             description,
             origin,
+            applicationId,
             priority
         }
-        console.log(data)
-         let response = await axios.post(`${apiURL}/api/ticket/create`,{data})
+
+         let response = await axios.post(`${apiURL}/api/ticket/create`,data ,{
+            headers:{
+            authorization : `Bearer ${token}`
+          }})
          setShowRes(true)
-        console.log(response.data.message.msg)
-        setRes(response.data.message.msg)
+ 
+        if(response.data.data){
+            setRes("Your Query has been registered our team will get back to you soon")
+        }
+        // setRes(response.data.message.msg)
         setName("")
         setEmail("")
-        setContact("")
+        setphone("")
         setTitle("")
         setDescription("")
     }
-    console.log(res)
+    // console.log(res)
 
 
 
     return (
         <>
             <div>
-                
+
                 {showRes ? <h4>{res}</h4> : <h1>Create Ticket</h1>}
                 <form onSubmit={onSubmit} >
                     {/* name */}
@@ -75,14 +83,14 @@ const CreateTicket = () => {
                         />
                     </div>
 
-                    {/* contact */}
+                    {/* phone */}
                     <div className="form-group">
-                        <label> Contact Number: </label>
+                        <label> Phone Number: </label>
                         <input
                             type="text"
                             className="form-control"
-                            value={contact}
-                            onChange={(e) => setContact(e.target.value)}
+                            value={phone}
+                            onChange={(e) => setphone(e.target.value)}
 
                         />
                     </div>

@@ -1,19 +1,40 @@
 import prisma from "./database.js";
 
- const createUser = ({data}) =>{
-    return prisma.user.create({
-        data:data
-    })
+ const createUser = async({data}) =>{
+    return await prisma.user.upsert({
+          where :{
+            email : data.email
+          },
+          update  : {},
+          create :{
+            ...data
+          }
+    });
 }
 
- const createQuery = ({data}) =>{
-    return prisma.query.create({
-        data:data
+ const createQuery = async({data}) =>{
+    return await prisma.query.create({
+        data:{
+            title : data.title,
+            description : data.description,
+            origin : data.origin,
+            applicationId : data.applicationId,
+            priority : data.priority,
+            user :{
+                connect :{
+                    uuid :data.uuid
+                }
+            }
+        }
     })
 }
 
  const getAllQueries = () =>{
-    return prisma.query.findMany()
+    return prisma.query.findMany({
+        include:{
+            user : true
+        }
+    })
 }
 
  const getAllUsers = () =>{
@@ -21,15 +42,14 @@ import prisma from "./database.js";
 }
 
  const getQuery = async ({uuid}) =>{
-
-
     return prisma.query.findFirst({
         where :{
             uuid : uuid
+        },
+        include : {
+            user : true
         }
     });
-
-
 }
 
  const getUserDetails = ({userid}) =>{

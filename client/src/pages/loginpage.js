@@ -3,51 +3,38 @@ import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import axios from "axios"
 import { apiURL } from '../env';
 import { useNavigate } from "react-router-dom"
-
+import {useDispatch , useSelector} from 'react-redux'
+import { userToken } from '../store/slice/userSlice';
 
 const LoginPage = () => {
-
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showAlert, setShowAlert] = useState(false);
-  const [err , setErr] = useState("")
+  const [error , setError] = useState("")
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+
 
   const onSubmit = async(e) => {
     e.preventDefault()
     try {
-      console.log("Email:", email);
-      console.log("Password:", password);
+
       let bodyData = {
         email,
         password
       }
-      let res = await axios.post(`${apiURL}/api/admin/login`, bodyData)
-      console.log(res)
-      console.log(res.data.message)
-      if(res.data.message.email != undefined){
-        let adminData = {
-          loggedIn : true,
-          adminid: res.data.message.uuid,
-          department: res.data.message.department,
-          email : res.data.message.email,
-          name : res.data.message.name,
-          superadmin : res.data.message.superadmin,
-
-        }
-        localStorage.setItem('adminData',JSON.stringify(adminData))
-        
-        navigate("/home")
-      }else{
-        setShowAlert(true)
-        setErr(res.data.message)
-      }
+      let {data} = await axios.post(`${apiURL}/api/admin/login`, bodyData);
 
 
-      setShowAlert(true);
-    } catch (error) {
-       console.log(error);
+      localStorage.setItem('token', data.data.token)
+      dispatch(userToken( data.data.token ))
+
+
+
+      } catch (error) {
+        console.log(error);
+        // setError(error)
+        // setShowAlert(true);
     }
   };
 
@@ -59,8 +46,8 @@ const LoginPage = () => {
 
       <div className='justify-content-center d-flex flex-column '>
 
-      <h1>Login</h1>
-      <h2>{showAlert ? err  : <></>}</h2>
+
+      <h2>{showAlert ? error  : <h1>Login</h1>}</h2>
       <form onSubmit={onSubmit} >
 
         <div className="form-group">

@@ -1,36 +1,71 @@
 import logo from "./logo.svg";
 import "./App.css";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { store } from "./store/store";
-import { Provider } from "react-redux";
-import { useState } from "react";
-
+import { apiURL ,token} from "./env";
+import { useEffect, useState } from "react";
+import axios from "axios"
 import AppRoutes from "./pages/appRoutes";
-import Sidebar from "./components/sidebar";
-import Navbar from "./components/navbar";
-function App() {
+import LoginPage from "./pages/loginpage";
+import {useDispatch , useSelector} from 'react-redux'
+import { userData, userToken } from "./store/slice/userSlice";
 
-  const [sideBar,setSideBar] = useState(false)
+const App =() => {
+
+  const user = useSelector(state=>state.user)
+  const dispatch = useDispatch();
+  const [isLoggedin , setIsLoggedin] = useState(false)
+
+  let token = localStorage.getItem("token")
+
+  const getUserDetails = async() =>{
+      try {
+        let {data} = await axios.get(`${apiURL}/api/user/details`, {
+          headers :{
+            "Authorization" : `Bearer ${token}`
+          }
+        });
+
+        dispatch(userData( data.data ));
+        dispatch(userToken( token ));
+        setIsLoggedin(true);
+      } catch (error) {
+
+      }
+
+  }
+
+  useEffect(()=>{
+    token && getUserDetails()
+  },[token])
+
+  useEffect(()=>{
+
+  },[user.loading])
 
 
   return (
     <>
-    <Provider store={store}>
+
 
       <div className="p-0">
         <Router>
-          <Navbar sideBar={sideBar} setSideBar={setSideBar} />
-          <div className="d-flex p-2">
-            <Sidebar sideBar={sideBar} />
-            <div id="content">
-              <AppRoutes/>
-            </div>
-          </div>
+          { isLoggedin ?
+            <AppRoutes/>
+              :
+              <>
+              <Routes>
+                <Route path="/login" element={<LoginPage/>}/>
+                <Route path='*' element={<Navigate to={`/login`} />} />
+              </Routes>
+              </>
+          }
+
         </Router>
       </div>
-    </Provider>
-    </>
+
+</>
   );
 }
 

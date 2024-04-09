@@ -14,33 +14,37 @@ datasource db {
 }
 
 model User{
-   id Int @id @default(autoincrement())
-   uuid String @unique @default(uuid())
-   name String
-   email String @unique
-   contact String
+   id      Int   @id @default(autoincrement())
+   uuid    String  @unique @default(uuid())
+   name    String
+   email   String @unique
+   phone   String
    tickets Query[]
+   createdAt DateTime @default(now())
+   updatedAt DateTime @updatedAt
 }
 
 model Query{
   id Int @id @default(autoincrement())
-  user User @relation(fields: [userid] , references: [uuid])
-  userid String
   uuid String @unique @default(uuid())
   title String
   description String
   origin String
+  applicationId String
   priority Priority
   status Status @default(NEW)
   type Type @default(NONE)
-  createdAt DateTime @default(now())
-  assignedTo String? @default("cb259d6a-8d28-45c0-9114-e9f4266d455c")
-  admins Admins? @relation(fields: [assignedTo] , references: [uuid])
+  user User @relation(fields: [userid] , references: [id])
+  userid Int
+  assigned Admins? @relation(fields: [assignedTo] , references: [id])
+  assignedTo Int?
   solvedBy String? @default("None")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Admins{
-  id Int @id @default(autoincrement())
+  id   Int @id @default(autoincrement())
   uuid String @unique @default(uuid())
   name String
   email String @unique
@@ -49,9 +53,6 @@ model Admins{
   superadmin Boolean @default(false)
   queries Query[]
 }
-
-
-
 
 enum Priority{
   HIGH

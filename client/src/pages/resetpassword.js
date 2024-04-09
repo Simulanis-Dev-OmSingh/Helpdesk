@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { apiURL } from '../env';
+import { apiURL ,token} from '../env';
 const ResetPassword = () => {
 
 
@@ -9,37 +9,47 @@ const ResetPassword = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [password2, setPassword2] = useState('');
   const [showAlert, setShowAlert] = useState(false);
+  const [error , setError] = useState("")
   const navigate = useNavigate()
 
   const onSubmit = async(e) => {
     e.preventDefault()
     try {
-      console.log("Email:", email);
-      console.log("Password:", password);
-      if(password == password2){
+
+      if(newPassword == password2){
 
           let bodyData = {
             email,
-            password
+            password,
+            newPassword
           }
-          let res = await axios.post(`${apiURL}/api/admin/resetpassword`, bodyData)
+          let res = await axios.post(`${apiURL}/api/admin/resetpassword`, bodyData ,{headers:{
+            authorization : `Bearer ${token}`
+          }})
           console.log(res)
           console.log(res.status)
-        //   if(res.status == 200){
-        //     navigate("/home")
-        // }
-        setShowAlert(true);
+          if(res.data.data){
+            navigate("/home")
+        }else{
+          console.log("Something went wrong")
+        }
+
 
 
       }else{
         console.log("PASSWORD DOES NOT MATCH")
+        setError("PASSWORD DOES NOT MATCH")
+        setShowAlert(true);
       }
 
 
     } catch (error) {
-       console.log(error);
+       console.log(error.response.data.message);
+       setError(error.response.data.message)
+        setShowAlert(true);
     }
   };
 
@@ -50,8 +60,8 @@ const ResetPassword = () => {
     <>
     <div className=''>
       <div className=''>
+      {showAlert ? error : <h1>Reset Password</h1>}
 
-      <h1>Reset Password</h1>
       <form onSubmit={onSubmit} >
 
         <div className="form-group">
@@ -65,12 +75,22 @@ const ResetPassword = () => {
         </div>
 
         <div className="form-group">
-          <label>Enter New Password: </label>
+          <label>Enter Old Password: </label>
           <input
             type="password"
             className="form-control"
             // value={email}
             onChange={(e) => setPassword(e.target.value)}
+            />
+        </div>
+
+        <div className="form-group">
+          <label>Enter New Password: </label>
+          <input
+            type="password"
+            className="form-control"
+            // value={email}
+            onChange={(e) => setNewPassword(e.target.value)}
             />
         </div>
         <div className="form-group">

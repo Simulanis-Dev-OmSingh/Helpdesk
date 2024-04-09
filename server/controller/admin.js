@@ -1,59 +1,87 @@
+import { error } from "console";
+import generator from "generate-password";
 import AdminUtils from "../utils/admin.js"
 import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
+import prisma from "../utils/database.js";
 
 
 export const createAdmin = async (req,res) =>{
-    // console.log("REACHED CREATE ADMIN in CONTROLLER")
     try{
-        const password = process.env.DEFAULT_PASSWORD
-        // console.log("MY DEFAULT PASSWORD IS",password)
+        console.log(req.body)
+        const {name ,email , department , superAdmin} = req.body;
 
+        const findAdmin = await AdminUtils.findAdmin({email})
+
+        if(findAdmin){
+            return res.status(422).json({
+                status : false,
+                message : "This email already exist."
+            })
+        }
+
+        const password = generator.generate({
+            length:5,
+            numbers : true,
+            uppercase : false,
+            excludeSimilarCharacters : true
+        });
+
+        console.log("password is ",password)
         let encryptedPassword =  bcrypt.hashSync(password,10)
-        console.log(req.body?.data,"----------------------------------------------------------------------")
-        const {name ,email , department , superadmin} = req.body.data
+
         const data = {
             name ,
             email ,
-            department ,
-            // password ,
+            department,
             password : encryptedPassword,
-            superadmin
+            superadmin : superAdmin
         }
-         let response = await AdminUtils.createAdmin({data})
-         res.status(200).json({
+
+        let response =  await AdminUtils.createAdmin({ data });
+
+        delete response.password
+        delete response.superadmin
+
+        return res.status(200).json({
             status : true,
-            message : {
-                msg : "NEW ADMIN CREATED DEFAULT PASSWORD IS \"PASSWORD\" ",
-                response
-            }
-
-         })
+             data : response
+            })
 
 
-    }catch(err){
-        console.log("ERROR CREATING ADMIN")
-        console.log(err)
-        res.status(402).json({
+    }catch(error){
+        return res.status(422).json({
             status : false ,
-            message:"ERROR OCCURED WHILE CREATING NEW ADMIN"
+            message: error.message
         })
     }
 
 }
 
 export const login = async (req,res) =>{
-    const {email , password} = req.body
-    console.log("LOGIN USER ", email , password)
+
+    const {email , password} = req.body;
+
     try{
-        let response =  await AdminUtils.login({email , password})
+        let response =  await AdminUtils.login({email , password});
+        delete response.password;
+
+        let data = {
+            uuid : response.uuid,
+            email : response.email
+        }
+
+        const secretKey = process.env.SECRET_KEY
+
+        const token = jwt.sign(data,secretKey)
+
         return res.status(200).json({
             status:true,
-            message: response.msg
-
-        })
+            data: {...response, token}
+        });
     }catch(error){
-        console.log(error)
-        return res.status(402).json({
+        console.log(error.message)
+        return res.status(422).json({
             status: false,
             message: error.message
         })
@@ -63,24 +91,25 @@ export const login = async (req,res) =>{
 
 export const forgetPassword = async (req,res) =>{
     try{
-        const {email , password } = req.body
-        console.log("LOGIN USER ", email , password)
-        let encryptedPassword = bcrypt.hashSync(password,10)
+        const {email , password ,newPassword } = req.body;
 
-        let response = await AdminUtils.forgetPassword({email , encryptedPassword})
+        let authorized = await await AdminUtils.login({email , password});
+        console.log(authorized)
+        if(authorized){
+            let encryptedPassword = bcrypt.hashSync(newPassword,10)
+            let response = await AdminUtils.forgetPassword({email , encryptedPassword})
+            res.status(200).json({
+                status : true ,
+                data : response
+            })
+        }
 
-        res.status(200).json({
-            status : true ,
-            message:response
-        })
 
+    }catch(error){
 
-    }catch(err){
-        console.log("ERROR CREATING NEW PASSWORD")
-        console.log(err)
-        res.status(402).json({
+        res.status(422).json({
             status : false ,
-            message:"ERROR CREATING NEW PASSWORD"
+            message: error.message
         })
     }
 
@@ -93,16 +122,12 @@ export const  getAdmin = async (req ,res) =>{
         let response =  await AdminUtils.getAdmin({uuid})
         return res.status(200).json({
             status:true,
-            message: {
-                msg : "GOT ADMIN DETAILS",
-                response
-            }
+            data : response
 
         })
     }catch(error){
-        console.log("ERROR OCCURED WHILE FETCHING ADMIN DETAILS")
-        console.log(error)
-        return res.status(402).json({
+
+        return res.status(422).json({
             status: false,
             message: error.message
         })
@@ -110,22 +135,49 @@ export const  getAdmin = async (req ,res) =>{
 }
 
 export const getAllAdmin = async (req,res) =>{
+
     try{
         let response =  await AdminUtils.getAllAdmin()
+
         return res.status(200).json({
             status:true,
-            message: {
-                msg : "GOT ALL ADMIN DETAILS",
-                response
-            }
+            data : response
 
         })
     }catch(error){
-        console.log("ERROR OCCURED WHILE FETCHING ADMIN DETAILS")
-        console.log(error)
-        return res.status(402).json({
+
+        return res.status(422).json({
             status: false,
             message: error.message
+        })
+    }
+}
+
+export const isAuthorized = async (req,res) =>{
+    res.status(200).json({status : true , data : "Authorized"})
+}
+
+export const userDetails = async(req, res) =>{
+    try {
+        const { userId} = req;
+
+        let userData = await prisma.admins.findFirst({
+            where :{
+                uuid : userId
+            }
+        });
+
+        delete userData.password
+
+        return res.status(200).json({
+            status : false,
+            data : userData
+        });
+
+    } catch (error) {
+        return res.status(422).json({
+            status : false,
+            message : error
         })
     }
 }

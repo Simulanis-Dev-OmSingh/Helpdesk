@@ -1,0 +1,1 @@
+npx prisma migrate dev -n "UPDATE ASIIGNED TO"
