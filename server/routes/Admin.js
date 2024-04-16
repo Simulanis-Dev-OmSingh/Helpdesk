@@ -3,7 +3,7 @@ import { createAdmin ,forgetPassword ,login , getAdmin , getAllAdmin ,isAuthoriz
 import { authorization } from "../middlewares/authorization.js";
 const router = Router()
 
-router.post('/create',authorization,createAdmin)
+router.post('/create',createAdmin)
 router.post('/resetpassword',authorization,forgetPassword)
 router.post('/login',login)
 router.get('/get-admin',authorization,getAdmin)

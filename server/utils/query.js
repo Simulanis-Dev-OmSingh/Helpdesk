@@ -42,7 +42,7 @@ import prisma from "./database.js";
 }
 
  const getQuery = async ({uuid}) =>{
-    return prisma.query.findFirst({
+    return await prisma.query.findFirst({
         where :{
             uuid : uuid
         },

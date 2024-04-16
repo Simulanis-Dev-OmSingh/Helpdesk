@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from "react-router-dom";
 import axios from 'axios';
-import { apiURL , token } from '../env';
-
+import { apiURL  } from '../env';
+import { useSelector } from 'react-redux';
 const CreateTicket = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -14,6 +14,7 @@ const CreateTicket = () => {
     const [showRes , setShowRes] = useState(false)
     const [res,setRes] = useState("")
     const location = useLocation()
+    const user = useSelector(state=>state.user)
     useEffect(() => {
         let url = window.location.href.split("/")[2]
         setOrigin(url)
@@ -36,7 +37,7 @@ const CreateTicket = () => {
 
          let response = await axios.post(`${apiURL}/api/ticket/create`,data ,{
             headers:{
-            authorization : `Bearer ${token}`
+            authorization : `Bearer ${user.token}`
           }})
          setShowRes(true)
  

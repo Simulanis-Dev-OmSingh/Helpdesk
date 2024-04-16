@@ -10,6 +10,7 @@ import AppRoutes from "./pages/appRoutes";
 import LoginPage from "./pages/loginpage";
 import {useDispatch , useSelector} from 'react-redux'
 import { userData, userToken } from "./store/slice/userSlice";
+import CreateAdmin from "./pages/createAdmin";
 
 const App =() => {
 
@@ -58,6 +59,7 @@ const App =() => {
               <Routes>
                 <Route path="/login" element={<LoginPage/>}/>
                 <Route path='*' element={<Navigate to={`/login`} />} />
+                <Route path='/createAdmin' element={<CreateAdmin/>} />
               </Routes>
               </>
           }

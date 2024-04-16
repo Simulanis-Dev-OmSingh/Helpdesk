@@ -8,6 +8,7 @@ export const authorization = (req , res , next) =>{
             return res.status(401).json({ message: 'Unauthorized',  status: false });
         }
         var token = authHeader.split(' ')[1];
+        // console.log(token)
         if (!token || token === "") {
             return res.status(401).json({ message: 'Unauthorized',  status: false });
         }

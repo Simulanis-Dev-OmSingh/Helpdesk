@@ -2,11 +2,14 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { apiURL ,token} from '../env';
+
+import { useSelector } from 'react-redux';
 const ResetPassword = () => {
-
-
-
-
+  
+  
+  
+  
+  const user = useSelector(state=>state.user)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -27,7 +30,7 @@ const ResetPassword = () => {
             newPassword
           }
           let res = await axios.post(`${apiURL}/api/admin/resetpassword`, bodyData ,{headers:{
-            authorization : `Bearer ${token}`
+            authorization : `Bearer ${user.token}`
           }})
           console.log(res)
           console.log(res.status)
