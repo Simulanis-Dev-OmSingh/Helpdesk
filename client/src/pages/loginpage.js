@@ -32,7 +32,8 @@ const LoginPage = () => {
 
 
       } catch (error) {
-        console.log(error);
+        setShowAlert(error.response.data.message)
+        console.log();
         // setError(error)
         // setShowAlert(true);
     }
@@ -47,7 +48,7 @@ const LoginPage = () => {
       <div className='justify-content-center d-flex flex-column '>
 
 
-      <h2>{showAlert ? error  : <h1>Login</h1>}</h2>
+      <h2>{showAlert ? showAlert  : <h1>Login</h1>}</h2>
       <form onSubmit={onSubmit} >
 
         <div className="form-group">

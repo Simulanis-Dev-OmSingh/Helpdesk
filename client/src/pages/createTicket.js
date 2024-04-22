@@ -4,6 +4,7 @@ import axios from 'axios';
 import { apiURL  } from '../env';
 import { useSelector } from 'react-redux';
 const CreateTicket = () => {
+    let token = localStorage.getItem("token")
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setphone] = useState("");
@@ -37,10 +38,10 @@ const CreateTicket = () => {
 
          let response = await axios.post(`${apiURL}/api/ticket/create`,data ,{
             headers:{
-            authorization : `Bearer ${user.token}`
+            authorization : `Bearer ${token}`
           }})
          setShowRes(true)
- 
+
         if(response.data.data){
             setRes("Your Query has been registered our team will get back to you soon")
         }

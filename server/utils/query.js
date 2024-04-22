@@ -1,4 +1,4 @@
-import prisma from "./database.js";
+import  prisma from "./database.js";
 
  const createUser = async({data}) =>{
     return await prisma.user.upsert({
@@ -29,16 +29,16 @@ import prisma from "./database.js";
     })
 }
 
- const getAllQueries = () =>{
-    return prisma.query.findMany({
+ const getAllQueries = async () =>{
+    return await prisma.query.findMany({
         include:{
             user : true
         }
     })
 }
 
- const getAllUsers = () =>{
-    return prisma.user.findMany()
+ const getAllUsers = async () =>{
+    return await prisma.user.findMany({})
 }
 
  const getQuery = async ({uuid}) =>{
@@ -52,26 +52,55 @@ import prisma from "./database.js";
     });
 }
 
- const getUserDetails = ({userid}) =>{
-    return prisma.user.findFirst({
+ const getUserDetails = async ({userid}) =>{
+    return await prisma.user.findFirst({
         where:{
             uuid : userid
         }
     })
 }
 
-const updateQuery = ({uuid , priority , status , type}) =>{
-    return prisma.query.update({
+const updateQuery = async ({uuid , priority , status , type , assignedTo}) =>{
+    let data = await prisma.admins.findFirst({
+        where : {
+            email : assignedTo
+        }
+    })
+    // console.log("QUERY",data.id)
+    assignedTo = data.id
+    // console.log(assignedTo)
+    return await prisma.query.update({
         where:{
             uuid
         },
         data:{
             priority ,
             status,
-            type
+            type,
+            assignedTo,
         }
     })
 
+}
+
+
+
+const filterQueries = async ({data}) =>{
+    return await prisma.query.findMany({
+        ...data
+    })
+}
+
+
+const markAsSolved = async ({uuid  , email}) =>{
+    return await prisma.query.update({
+        where:{
+            uuid
+        },
+        data:{
+            solvedBy : email
+        }
+    })
 }
 
 export default {
@@ -80,6 +109,8 @@ export default {
     getAllQueries ,
     getAllUsers ,
     getQuery ,
-     getUserDetails,
-     updateQuery
+    getUserDetails,
+    updateQuery,
+    filterQueries,
+    markAsSolved
 }

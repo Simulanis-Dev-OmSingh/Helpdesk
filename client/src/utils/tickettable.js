@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Users } from "./tableutils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate , } from "react-router-dom";
+import { useSelector } from "react-redux";
 const ShowTable = ({ props }) => {
   const [users, setUsers] = useState([]);
+  const user = useSelector(state=>state.user.userData)
+
   const [tickets, setTickets] = useState([]);
   const navigate = useNavigate();
 
@@ -14,7 +17,12 @@ const ShowTable = ({ props }) => {
   });
 
   const deleteQuery = (uuid) =>{
+  }
 
+  const markAsSolved = async(uuid) =>{
+    console.log("user")
+  console.log(user.email)
+  console.log(uuid)
   }
 
   return tickets.map((current) => {
@@ -39,6 +47,7 @@ const ShowTable = ({ props }) => {
         {/* <td>8888888888</td> */}
         <td>{current.assignedTo}</td>
         <td>{date}</td>
+        <td>{current.solvedBy}</td>
         <td>
           <div>
             <button
@@ -53,6 +62,7 @@ const ShowTable = ({ props }) => {
               Edit
             </button >
             <button onClick={deleteQuery(current.uuid)} >Delete</button>
+            <button onClick={markAsSolved(current.uuid)}>Mark as Solved</button>
           </div>
         </td>
       </tr>

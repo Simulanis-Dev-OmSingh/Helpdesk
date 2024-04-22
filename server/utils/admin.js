@@ -3,7 +3,7 @@ import prisma from "./database.js"
 import bcrypt from "bcrypt";
 
 const findAdmin = async({email})=>{
-      return await prisma.admins.findFirst({
+      return await await prisma.admins.findFirst({
         where:{
             email
         }
@@ -11,14 +11,14 @@ const findAdmin = async({email})=>{
 }
 
 const createAdmin = async ({ data }) =>{
-    return prisma.admins.create({
+    return await prisma.admins.create({
          data:data
     })
 }
 
-const forgetPassword = ({email , encryptedPassword}) =>{
+const forgetPassword = async  ({email , encryptedPassword}) =>{
 
-    return prisma.admins.update({
+    return await prisma.admins.update({
         where:{
             email
         },
@@ -30,7 +30,7 @@ const forgetPassword = ({email , encryptedPassword}) =>{
 
  const login = async ({email , password}) =>{
 
-    const findEmail = await prisma.admins.findFirst({
+    const findEmail = await await prisma.admins.findFirst({
         where: {
             email
         }
@@ -51,8 +51,8 @@ const forgetPassword = ({email , encryptedPassword}) =>{
     }
 
 
- const getAdmin = ({uuid}) =>{
-    return prisma.admins.findFirst({
+ const getAdmin = async  ({uuid}) =>{
+    return await prisma.admins.findFirst({
         where:{
             uuid
         }
@@ -60,8 +60,18 @@ const forgetPassword = ({email , encryptedPassword}) =>{
 }
 
 
- const getAllAdmin = () =>{
-    return prisma.admins.findMany()
+ const getAllAdmin = async  () =>{
+    return await prisma.admins.findMany()
+}
+
+const getRecipients = async  ()=>{
+    return await prisma.admins.findMany({
+        where:{
+            superadmin : true
+        },select:{
+            email : true
+        }
+    })
 }
 
 export default {
@@ -70,5 +80,6 @@ export default {
     login ,
     getAdmin ,
     getAllAdmin,
-    findAdmin
+    findAdmin,
+    getRecipients
 }

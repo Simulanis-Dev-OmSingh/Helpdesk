@@ -4,7 +4,9 @@ import AdminUtils from "../utils/admin.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import prisma from "../utils/database.js";
-
+import nodemailer from 'nodemailer';
+import handlebars from 'handlebars';
+import fs from 'fs';
 
 export const createAdmin = async (req,res) =>{
     try{
@@ -39,9 +41,44 @@ export const createAdmin = async (req,res) =>{
         }
 
         let response =  await AdminUtils.createAdmin({ data });
-
         delete response.password
         delete response.superadmin
+
+            //  Email Send Start
+    let smtpTransport = nodemailer.createTransport({
+        host : process.env.NODEMAILER_SERVICE_HOST,
+        service: process.env.NODEMAILER_SERVICE,
+        auth: {
+          user: process.env.NODEMAILER_EMAIL,
+          pass: process.env.NODEMAILER_PASSWORD,
+        }
+      });
+    var html = fs.readFileSync('template/newadmin.html', { encoding: 'utf-8' });
+    var template = handlebars.compile(html);
+    // smtpTransport.use('compile', inlineBase64({ cidPrefix: 'somePrefix_' }));
+    var replacements = {
+
+        email: email,
+        password: password,    };
+    var htmlToSend = template(replacements);
+    let recipients = email
+    let mailOptions = {
+        from: process.env.NODEMAILER_EMAIL,
+        to: recipients,
+        subject: `Congratulations You have gained access of Ticketing System`,
+        html: htmlToSend
+      }
+      smtpTransport.sendMail(mailOptions, (err, response) => {
+        if (err) {
+          console.log(err)
+          res.json({ error: true })
+        }
+        else {
+          res.json({ error: false })
+        }
+      })
+      smtpTransport.close();
+      //  Email Send end
 
         return res.status(200).json({
             status : true,
@@ -50,6 +87,7 @@ export const createAdmin = async (req,res) =>{
 
 
     }catch(error){
+        console.log(error)
         return res.status(422).json({
             status : false ,
             message: error.message

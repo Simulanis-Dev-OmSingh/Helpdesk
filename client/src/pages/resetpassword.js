@@ -5,10 +5,10 @@ import { apiURL ,token} from '../env';
 
 import { useSelector } from 'react-redux';
 const ResetPassword = () => {
-  
-  
-  
-  
+
+
+
+  let token = localStorage.getItem("token")
   const user = useSelector(state=>state.user)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -30,7 +30,7 @@ const ResetPassword = () => {
             newPassword
           }
           let res = await axios.post(`${apiURL}/api/admin/resetpassword`, bodyData ,{headers:{
-            authorization : `Bearer ${user.token}`
+            authorization : `Bearer ${token}`
           }})
           console.log(res)
           console.log(res.status)

@@ -4,35 +4,40 @@ import { apiURL} from '../env'
 import Table from 'react-bootstrap/Table';
 import ShowTable from '../utils/tickettable.js';
 import { useSelector } from 'react-redux';
-
-
+import Filter from '../utils/filter.js';
 
 const Dashboard = () => {
+  let token = localStorage.getItem("token")
   const [tickets, setTickets] = useState([])
   const [users, setUsers] = useState([])
-  const user = useSelector(state=>state.user)
+
 
   const fetchData = async () => {
     let {data} = await axios.get(`${apiURL}/api/ticket/get-all-tickets`,{
       headers:{
-        authorization : `Bearer ${user.token}`
+        authorization : `Bearer ${token}`
       }
     })
     setTickets(data.data);
   }
 
   useEffect(() => {
-    if(user.token){
+    if(token){
       fetchData()
     }
-  }, [user.token])
+  }, [token])
 
 
   return (
     <>
       <div>
         <h1>Dashboard</h1>
+        <div className='d-flex align-items-center  justify-content-between'>
         <h4>All tickets</h4>
+        <div className=''>
+          <Filter/>
+        </div>
+        </div>
 
         {
           tickets.length > 0 ?
@@ -47,6 +52,7 @@ const Dashboard = () => {
               <th>Origin</th>
               <th>Assigned</th>
               <th>Date</th>
+              <th>Solved By</th>
               <th>Actions</th>
             </thead>
             <tbody>
